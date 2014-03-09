@@ -1,7 +1,9 @@
 //Configuration Settings for Hapsus Server
 //mode: heroku or development
+//name: Name of server
 //port: server port
 //socket.io.log: Socket.io debug mode
+//path: Url path to host the server at (eg: /game/). You MUST hava a slash at the end of the path
 
 var config = {};
 
@@ -21,6 +23,9 @@ var configure = function() {
     config.socket.io.log = true;
   }
 };
+
+config.name = "Hapsus Server";
+config.path = "/"; 
 
 exports.configure = configure;
 exports.config = config;
