@@ -29,7 +29,7 @@ io.of(configuration.config.path + "socket").on('connection', function(socket){
     });      
   });
 
-  //Debug websocket testing (Latentsy)
+  //Debug websocket testing (Latentcy)
   socket.on('ping', function(data){
     socket.emit("pong", {time_start: data.time_start});
   });
