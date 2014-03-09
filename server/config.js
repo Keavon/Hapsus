@@ -20,7 +20,7 @@ var configure = function() {
   } else { //If app is in development mode use these settings.
     config.mode = "Development";
     config.port = 8080;
-    config.socket.io.log = true;
+    config.socket.io.log = false;
   }
 };
 
