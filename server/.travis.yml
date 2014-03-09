@@ -1,0 +1,8 @@
+deploy:
+  provider: heroku
+  api_key:
+    secure: Ko3/jLkfwAJ3aDC6LpqSY+QFoFWYnBxTzP8E1V/8ZtPswQ2aEuAhQasZXzGVd4d5vV0/azBAVA1fWDDtJDN9BUroR04wnLa/9g8X2z/L4hrAZcWOeCbX4ag/RHRmZp0jrfybdDlqmWdKyZ15gBzYCMdU/xXlc2AP61Arj1xbwoY=
+  app: hapsus
+  on:
+    repo: hapsus/hapsus-server
+    branch: production
