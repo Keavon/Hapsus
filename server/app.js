@@ -8,6 +8,7 @@ var io = require('socket.io').listen(server, {log: configuration.config.socket.i
 var d = new Date();
 
 io.on('connection', function(socket){
+  socket.set('transports', ['websocket']);
   socket.emit("connection", {});
   socket.on('ping', function(data){
     socket.emit("pong", {time_start: data.time_start});
