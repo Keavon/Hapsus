@@ -17,23 +17,51 @@ var server = require('http').Server(function(req, res) {
 var io = require('socket.io').listen(server, {log: configuration.config.socket.io.log });
 
 io.of(configuration.config.path + "socket").on('connection', function(socket){
+  
   socket.set('player', require('./lib/user').add_user(), function() {
     socket.get('player', function(err, name){
       if(err) {
-        console.log("Error in Name Retrival: " + err);
+        console.log("Error in Name Retrival(Never Connected?): " + err);
       } else {
         socket.emit("connection", {player: name });
+        socket.broadcast.emit("playerSpawn", {player: name}); 
       }
     });      
   });
+
+  //Debug websocket testing (Latentsy)
   socket.on('ping', function(data){
     socket.emit("pong", {time_start: data.time_start});
   });
+
+  socket.on('startMovement', function(data) {
+    socket.get('player', function( err, name) {
+      if(err) {
+        console.log("Err in Name Retrival(Never Connected?): " + err);
+      } else {
+        if(configuration.config.debug.messages) console.log("Start Movement: Moving Left: " +  data.movingLeft + " Angle: " + data.angle);
+        socket.broadcast.emit('moving', {player: name, movingLeft: data.movingLeft, angle: data.angle});
+      }
+    });
+  });
+
+  socket.on('stopMovement', function(data) { 
+    socket.get('player', function(err, name) { 
+      if(err) {
+        console.log("Err in Name Retrival(Never Connected?): " + err);
+      } else {
+        if(configuration.config.debug.messages) console.log("Stop Movement Angle: " + data.angle);
+        socket.broadcast.emit('stop', {player: name, angle: data.angle});
+      }
+    });
+  });
+
   socket.on('disconnect', function(){
     socket.get('player', function( err, name) {
       if(err) {
-        console.log("Err in Name Removal: " + err);
+        console.log("Err in Name Removal(Never Connected?): " + err);
       } else {
+        socket.broadcast.emit('playerDisconnect', {player: name});
         require('./lib/user').remove_user(name);
       }
     });
