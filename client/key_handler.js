@@ -69,7 +69,6 @@ function checkForJump()
 		//var degToRad = 0.017453292519943295; // pi / 180
 		//var velocityAngle = tan(((y2 - y1) / (x2 - x1)) * degToRad);
 
-		console.log("jumped");
 		players.players[playerId].residence = null;
 		players.players[playerId].velocity = jumpVelocity;
 		players.players[playerId].angularVelocity = players.players[playerId].angle;
@@ -107,5 +106,6 @@ document.onkeyup = function (e)
 	if (e.charCode || e.keyCode == 38) // Right up
 	{
 		keyJump = false;
+		firstJump = true;
 	}
 };
