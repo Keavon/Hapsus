@@ -7,7 +7,7 @@ var firstRight = true;
 var firstStop = true;
 var firstJump = true;
 
-function keyHandler()
+function keyHandler(pId)
 {
 	if (!keyLeft && !keyRight) // None down
 	{
@@ -16,7 +16,7 @@ function keyHandler()
 
 		if (firstStop)
 		{
-			socket.emit("stopMovement", { "angle": players.players[playerId].angle });
+			socket.emit("stopMovement", { "angle": players.players[pId].angle });
 			firstStop = false;
 		}
 
@@ -27,7 +27,7 @@ function keyHandler()
 
 		if (firstLeft)
 		{
-			socket.emit("startMovement", { "movingLeft": true, "angle": players.players[playerId].angle });
+			socket.emit("startMovement", { "movingLeft": true, "angle": players.players[pId].angle });
 			firstLeft = false;
 		}
 
@@ -38,7 +38,7 @@ function keyHandler()
 
 		if (firstRight)
 		{
-			socket.emit("startMovement", { "movingLeft": false, "angle": players.players[playerId].angle });
+			socket.emit("startMovement", { "movingLeft": false, "angle": players.players[pId].angle });
 			firstRight = false;
 		}
 
@@ -50,28 +50,20 @@ function keyHandler()
 
 		if (firstStop)
 		{
-			socket.emit("stopMovement", { "angle": players.players[playerId].angle });
+			socket.emit("stopMovement", { "angle": players.players[pId].angle });
 			firstStop = false;
 		}
 
 		return 0;
 	}
 }
-function checkForJump()
+function checkForJump(pId)
 {
 	if (keyJump && firstJump)
 	{
-		//var playerResidence = players.players[playerId].residence;
-		//var x1 = circles[playerResidence].x;
-		//var x2 = players.players[playerId].x;
-		//var y1 = circles[playerResidence].y;
-		//var y2 = players.players[playerId].y;
-		//var degToRad = 0.017453292519943295; // pi / 180
-		//var velocityAngle = tan(((y2 - y1) / (x2 - x1)) * degToRad);
-
-		players.players[playerId].residence = null;
-		players.players[playerId].velocity = jumpVelocity;
-		players.players[playerId].angularVelocity = players.players[playerId].angle;
+		players.players[pId].residence = null;
+		players.players[pId].velocity = players.players[pId].jumpVelocity;
+		players.players[pId].angularVelocity = players.players[pId].angle;
 		firstJump = false;
 	}
 }
