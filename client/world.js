@@ -6,11 +6,11 @@ var playerId = 0; // TEMP
 var deltaT = 0;
 
 var circles = {
-	"circles":[
+	"circles": [
 		{ "x": 300, "y": 200, "r": 100 },
 		{ "x": 800, "y": 400, "r": 50 }
 	]
-}
+};
 
 var playerSize = 20;
 var playerColor = "#ff0000";
@@ -22,6 +22,7 @@ var circleMinRadius = 50;
 var maxCirclePlusPlayer = circleMaxRadius + playerSize;
 
 var degToRad = 0.017453292519943295; // pi / 180
+var radToDeg = 57.29577951308232; // 180 / pi
 
 var players = {
 	"players": [
@@ -62,7 +63,7 @@ function updateFrame()
 	checkForJump();
 
 	// Move around edge of circle
-	if (players.players[playerId].residence != null)
+	if (players.players[playerId].residence !== null)
 	{
 		// Modifies the angle from keyboard input
 		players.players[playerId].angle += (playerSpeed * keyHandler() * deltaT) / circles.circles[players.players[playerId].residence].r;
@@ -76,9 +77,7 @@ function updateFrame()
 		// Set coordinates to player
 		players.players[playerId].x = circleX + ((radius + playerSize) * Math.cos(angle * degToRad));
 		players.players[playerId].y = circleY + ((radius + playerSize) * Math.sin(angle * degToRad));
-	}
-	// Move when player is flying
-	else
+	} else // Move when player is flying
 	{
 		// Save previous location
 		players.players[playerId].lastX = players.players[playerId].x;
@@ -94,21 +93,18 @@ function updateFrame()
 			if (players.players[playerId].x > (circles.circles[testNumber].r + playerSize) - circles.circles[testNumber].x && players.players[playerId].x < (circles.circles[testNumber].r + playerSize) + circles.circles[testNumber].x && players.players[playerId].y > (circles.circles[testNumber].r + playerSize) - circles.circles[testNumber].y && players.players[playerId].y < (circles.circles[testNumber].r + playerSize) + circles.circles[testNumber].y)
 			{
 				// Checks if the player is within the radius of the player + tested circle to determine if they're touching
-				if(Math.sqrt(Math.pow(players.players[playerId].x - circles.circles[testNumber].x, 2) + Math.pow(players.players[playerId].y - circles.circles[testNumber].y, 2)) <= circles.circles[testNumber].r + playerSize)
+				if (Math.sqrt(Math.pow(players.players[playerId].x - circles.circles[testNumber].x, 2) + Math.pow(players.players[playerId].y - circles.circles[testNumber].y, 2)) <= circles.circles[testNumber].r + playerSize)
 				{
 					players.players[playerId].residence = testNumber;
 					players.players[playerId].velocity = 0;
 					firstJump = true;
 
 					var collisionRadius = circles.circles[playerId].r + playerSize;
-					var circleLastX = players.players[playerId].lastX - circles.circles[players.players[playerId].residence].x;
-					var circleLastY = players.players[playerId].lastY - circles.circles[players.players[playerId].residence].y;
-					var circleLastX = players.players[playerId].x - circles.circles[players.players[playerId].residence].x;
-					var circleLastY = players.players[playerId].x - circles.circles[players.players[playerId].residence].y;
+					var x = players.players[playerId].x - circles.circles[players.players[playerId].residence].x;
+					var y = players.players[playerId].y - circles.circles[players.players[playerId].residence].y;
 
-
-					console.log(circleLastX);
-					console.log("Radius: " + collisionRadius + ", old: (" + circleLastX + ", " + circleLastY + "), new: (" + circleLastX + ", " + circleLastY + ")");
+					players.players[playerId].angle = Math.atan2(y, x) * radToDeg;
+					console.log(players.players[playerId].angle);
 				}
 			}
 		}

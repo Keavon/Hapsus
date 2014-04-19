@@ -12,8 +12,7 @@ var leftFirst = true;
 var rightFirst = true;
 var stopFirst = true;
 
-
-var circles = new Array();
+var circles = [];
 circles[0] = { "x": 300, "y": 200, "r": 100 };
 circles[1] = { "x": 800, "y": 400, "r": 50 };
 
@@ -43,12 +42,11 @@ var player = {
 	]
 };
 
-playerPos = {
+var playerPos = {
 	"players": []
-}
+};
 
-
-(function () { var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame; window.requestAnimationFrame = requestAnimationFrame; })();
+(function () { var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame; window.requestAnimationFrame = requestAnimationFrame; }());
 
 var keyLeft = false;
 var keyRight = false;

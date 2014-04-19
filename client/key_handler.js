@@ -21,8 +21,7 @@ function keyHandler()
 		}
 
 		return 0;
-	}
-	else if (keyLeft && !keyRight) // Left down
+	} else if (keyLeft && !keyRight) // Left down
 	{
 		firstStop = true;
 
@@ -33,8 +32,7 @@ function keyHandler()
 		}
 
 		return -1;
-	}
-	else if (!keyLeft && keyRight) // Right down
+	} else if (!keyLeft && keyRight) // Right down
 	{
 		firstStop = true;
 
@@ -45,8 +43,7 @@ function keyHandler()
 		}
 
 		return 1;
-	}
-	else if (keyLeft && keyRight) // Both down
+	} else if (keyLeft && keyRight) // Both down
 	{
 		firstLeft = true;
 		firstRight = true;
@@ -95,7 +92,7 @@ document.onkeydown = function (e)
 	{
 		keyJump = true;
 	}
-}
+};
 document.onkeyup = function (e)
 {
 	e = e || window.event;

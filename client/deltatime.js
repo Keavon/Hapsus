@@ -3,7 +3,7 @@ var lastTime = null;
 
 function deltaTime()
 {
-	if (lastTime == null)
+	if (lastTime === null)
 	{
 		lastTime = new Date().getTime();
 	}
