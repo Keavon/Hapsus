@@ -1,5 +1,32 @@
-﻿var c = document.getElementById("game");
-var ctx = c.getContext("2d");
+﻿var canvas = document.getElementById("game");
+var context = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.onresize = function (event)
+{
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+};
+function requestFullScreen(element)
+{
+	var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+	if (requestMethod)
+	{
+		requestMethod.call(element);
+	} else if (typeof window.ActiveXObject !== "undefined")
+	{
+		var wscript = new ActiveXObject("WScript.Shell");
+		if (wscript !== null)
+		{
+			wscript.SendKeys("{F11}");
+		}
+	}
+}
+
+canvas.onclick = function(){
+	var elem = document.body;
+	requestFullScreen(elem);
+};
 
 var playerId = 0; // TEMP
 var playerSize = 20;
@@ -66,7 +93,7 @@ function updateFrame()
 	deltaT = deltaTime();
 
 	// Clear frame
-	ctx.clearRect(0, 0, c.width, c.height);
+	context.clearRect(0, 0, canvas.width, canvas.height);
 
 	checkForJump();
 
@@ -113,25 +140,25 @@ function updateFrame()
 		}
 	}
 
+	var offsetX = players.players[playerId].x - (canvas.offsetWidth * 0.5);
+	var offsetY = players.players[playerId].y - (canvas.offsetHeight * 0.5);
+
 	// Draws world circles
 	for (var worldCircles = 0; worldCircles < circles.circles.length; worldCircles++)
 	{
-		var offsetX = players.players[playerId].x - (c.offsetWidth * 0.5);
-		var offsetY = players.players[playerId].y - (c.offsetHeight * 0.5);
-
-		ctx.beginPath();
-		ctx.arc(circles.circles[worldCircles].x - offsetX, circles.circles[worldCircles].y - offsetY, circles.circles[worldCircles].r, 0, 2 * Math.PI);
-		ctx.fillStyle = "#3b94c7";
-		ctx.fill();
+		context.beginPath();
+		context.arc(circles.circles[worldCircles].x - offsetX, circles.circles[worldCircles].y - offsetY, circles.circles[worldCircles].r, 0, 2 * Math.PI);
+		context.fillStyle = "#3b94c7";
+		context.fill();
 	}
 
 	// Draws character
 	for (var playerNum = 0; playerNum < 1 /*TEMP*/; playerNum++)
 	{
-		ctx.beginPath();
-		ctx.arc(players.players[playerNum].x - offsetX, players.players[playerNum].y - offsetY, playerSize, 0, 2 * Math.PI);
-		ctx.fillStyle = players.players[playerNum].color;
-		ctx.fill();
+		context.beginPath();
+		context.arc(players.players[playerNum].x - offsetX, players.players[playerNum].y - offsetY, playerSize, 0, 2 * Math.PI);
+		context.fillStyle = players.players[playerNum].color;
+		context.fill();
 	}
 
 	requestAnimationFrame(updateFrame);

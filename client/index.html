@@ -3,9 +3,21 @@
 <head>
 	<meta charset="utf-8">
     <title>Hapsus</title>
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		canvas {
+			display: block;
+			background:#fff;
+		}
+	</style>
 </head>
 <body>
-	<canvas id="game" width="1024" height="512" style="border:1px solid #c3c3c3;"></canvas>
+	<canvas id="game" width="1024" height="512"></canvas>
 	<script src="socket.io.min.js"></script>
 	<script src="key_handler.js"></script>
 	<script src="connection.js"></script>

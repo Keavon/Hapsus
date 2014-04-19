@@ -1,5 +1,5 @@
-﻿var c = document.getElementById("game");
-var ctx = c.getContext("2d");
+﻿var context = document.getElementById("game");
+var context = context.getContext("2d");
 var startTime = new Date().getTime();
 var lastTime = null;
 
