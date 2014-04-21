@@ -22,7 +22,7 @@ function requestFullScreen(element)
 		}
 	}
 }
-canvas.onclick = function ()
+canvas.ondblclick = function ()
 {
 	var elem = document.body;
 	requestFullScreen(elem);
@@ -55,7 +55,7 @@ var players = {
 			"y": 0,
 			"lastX": 0,
 			"lastY": 0,
-			"residence": 0,
+			"residence": 2,
 			"angle": 0,
 			"velocity": 0,
 			"angularVelocity": 0,
@@ -77,29 +77,12 @@ var circles = {
 		"x": 800,
 		"y": 400,
 		"r": 50,
-		"capture": [
-		{
-			"id": 1397946725450,
-			"percentage": 0.6
-		}, {
-			"id": 1397946730842,
-			"percentage": 0.2
-		}
-		]
-
+		"capture": []
 	}, {
 		"x": 700,
 		"y": 100,
 		"r": 200,
-		"capture": [
-		{
-			"id": 1397946725450,
-			"percentage": 0.6
-		//}, {
-		//	"id": 1397946730842,
-		//	"percentage": 0.2
-		}
-		]
+		"capture": []
 	}
 	]
 };
@@ -128,6 +111,9 @@ context.fill();
 
 function updateFrame()
 {
+	// Get DeltaTime
+	deltaT = deltaTime();
+
 	// Clear frame
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -138,6 +124,8 @@ function updateFrame()
 	var offsetX = players.players[userIdElement].x - (canvas.offsetWidth * 0.5);
 	var offsetY = players.players[userIdElement].y - (canvas.offsetHeight * 0.5);
 
+	updateCircles();
+
 	// Draws world circles
 	for (var worldCircles = 0; worldCircles < circles.circles.length; worldCircles++)
 	{
@@ -147,22 +135,31 @@ function updateFrame()
 		var size = 1;
 		var nextSize = 1;
 
+		// Draws all layers of each circle
 		for (var i = 0; i < circles.circles[worldCircles].capture.length + 1; i++)
 		{
-			context.beginPath();
-
+			var color = "";
 			if (i < circles.circles[worldCircles].capture.length)
 			{
 				nextSize -= circles.circles[worldCircles].capture[i].percentage;
-				context.fillStyle = players.players.find(function (x){ return x.ID === circles.circles[worldCircles].capture[i].id; }).color;
+				color = players.players.find(function (x) { return x.ID === circles.circles[worldCircles].capture[i].id; }).color; // jshint ignore:line
+			} else if (nextSize > 0)
+			{
+				color = "#cccccc";
 			} else
 			{
-				context.fillStyle = "#cccccc";
+				break;
 			}
 
+			context.beginPath();
+			context.fillStyle = color;
 			context.arc(centerX, centerY, circleR * size, 0, 2 * Math.PI);
 			context.fill();
 
+			if (nextSize <= 0.00001)
+			{
+				break;
+			}
 			size = nextSize;
 		}
 	}
@@ -184,16 +181,28 @@ function updatePlayers()
 {
 	for (var playerId = 0; playerId < players.players.length; playerId++)
 	{
-		// Get DeltaTime
-		deltaT = deltaTime();
-
-		var movementDirection;
+		var movementDirection = 0;
 		if (players.players[playerId].ID == userID)
 		{
 			// Checks if the user has jumped
-			checkForJump(playerId);
 			movementDirection = keyHandler(playerId);
 			userIdElement = playerId;
+
+			if (checkForJump())
+			{
+				console.log("test");
+				for (var captives = 0; captives < circles.circles[players.players[playerId].residence].capture.length; captives++)
+				{
+					if (circles.circles[players.players[playerId].residence].capture[captives].id == players.players[playerId].ID)
+					{
+						circles.circles[players.players[playerId].residence].capture[captives].active = false;
+					}
+				}
+				players.players[playerId].residence = null;
+				players.players[playerId].velocity = players.players[playerId].jumpVelocity;
+				players.players[playerId].angularVelocity = players.players[playerId].angle;
+			}
+
 		}
 
 		// Move around edge of circle
@@ -211,6 +220,28 @@ function updatePlayers()
 			// Set coordinates to player
 			players.players[playerId].x = circleX + ((radius + players.players[playerId].size) * Math.cos(angle * degToRad));
 			players.players[playerId].y = circleY + ((radius + players.players[playerId].size) * Math.sin(angle * degToRad));
+
+			// Capture circle
+			var occurs = false;
+			for (var i = 0; i < circles.circles[players.players[playerId].residence].capture.length; i++)
+			{
+				if (circles.circles[players.players[playerId].residence].capture[i].id == players.players[playerId].ID)
+				{
+					occurs = true;
+					break;
+				}
+			}
+			if (!occurs)
+			{
+				circles.circles[players.players[playerId].residence].capture.push({
+					"id": players.players[playerId].ID,
+					"percentage": 0.0,
+					"active": true
+				});
+			} else
+			{
+				circles.circles[players.players[playerId].residence].capture[i].active = true;
+			}
 		} else // Move when player is flying
 		{
 			// Calculate position for this frame during flight
@@ -234,6 +265,33 @@ function updatePlayers()
 				}
 
 				//}
+			}
+		}
+	}
+}
+
+function updateCircles()
+{
+	// Repeat for every circle
+	for (var checkedCircle = 0; checkedCircle < circles.circles.length; checkedCircle++)
+	{
+		// Repeat for every capturing player
+		for (var i = 0; i < circles.circles[checkedCircle].capture.length; i++)
+		{
+			if (circles.circles[checkedCircle].capture[i].active)
+			{
+				circles.circles[checkedCircle].capture[i].percentage += deltaT / circles.circles[checkedCircle].r * 0.05;
+				if (circles.circles[checkedCircle].capture[i].percentage > 1)
+				{
+					circles.circles[checkedCircle].capture[i].percentage = 1;
+				}
+			} else
+			{
+				circles.circles[checkedCircle].capture[i].percentage -= deltaT / circles.circles[checkedCircle].r * 0.01;
+				if (circles.circles[checkedCircle].capture[i].percentage < 0)
+				{
+					circles.circles[checkedCircle].capture[i].percentage = 0;
+				}
 			}
 		}
 	}

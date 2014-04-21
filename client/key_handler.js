@@ -57,14 +57,15 @@ function keyHandler(pId)
 		return 0;
 	}
 }
-function checkForJump(pId)
+function checkForJump()
 {
 	if (keyJump && firstJump)
 	{
-		players.players[pId].residence = null;
-		players.players[pId].velocity = players.players[pId].jumpVelocity;
-		players.players[pId].angularVelocity = players.players[pId].angle;
 		firstJump = false;
+		return true;
+	} else
+	{
+		return false;
 	}
 }
 
